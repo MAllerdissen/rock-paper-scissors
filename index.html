@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Rock Paper Scissors</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap"
+      rel="stylesheet" />
+    <style>
+      body {
+        background-color: rgb(37, 37, 37);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: sans-serif;
+      }
+
+      .wrapper {
+        background-color: rgba(57, 57, 57);
+        border-bottom: 8px solid rgb(37, 37, 37);
+        border-left: 8px solid rgb(37, 37, 37);
+        border-right: 8px solid rgb(37, 37, 37);
+        border-radius: 20px;
+        margin-top: 10%;
+        width: 500px;
+        height: 300px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .title {
+        font-weight: 600;
+        font-size: 40px;
+        padding: 10px;
+        margin: 0;
+        color: rgb(219, 219, 219);
+        text-align: center;
+        width: 100%;
+        background-color: rgb(32, 32, 32);
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+      }
+
+      .js-computer-move {
+        font-size: 25px;
+        border: none;
+        margin: 15px 0 0 0;
+        padding: 10px 20px;
+        border-radius: 7px;
+        color: rgb(191, 191, 191);
+        background-color: rgb(79, 79, 79);
+      }
+
+      .border {
+        border-radius: 1px;
+        background-color: rgba(187, 187, 187, 0.3);
+        width: 72%;
+        height: 2px;
+        margin: 10px 0 2px 0;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
+      }
+
+      .scoreboard {
+        display: flex;
+        margin: 10px 0 5px 25px;
+        align-items: center;
+      }
+
+      .score {
+        display: flex;
+        background-color: black;
+        border-radius: 5px;
+      }
+
+      .scoreboard p {
+        color: white;
+        font-size: 15px;
+        font-family: Orbitron;
+        margin: 0 3px 0 3px;
+        padding: 5px 2px 5px 2px;
+      }
+
+      .count-reset-button {
+        padding: 8px;
+        height: 15px;
+        width: 15px;
+        border-radius: 12px;
+        margin-left: 10px;
+        border: none;
+        background-color: rgb(167, 59, 59);
+        transition: background-color 0.15s, height 0.1s, width 0.1s,
+          margin-left 0.1;
+      }
+
+      .count-reset-button:hover {
+        background-color: rgb(185, 64, 64);
+      }
+
+      .count-reset-button:active {
+        padding: 0;
+        margin: 0 2px 0 9px;
+      }
+
+      .js-result {
+        color: rgb(219, 219, 219);
+        margin: 5px 0 25px 0;
+        padding: 0;
+      }
+
+      .buttons {
+        display: flex;
+        width: 100%;
+        justify-content: space-evenly;
+      }
+
+      .buttons button {
+        font-size: 25px;
+        width: 135px;
+        height: 49px;
+        border: none;
+        margin: 0 10px;
+        border-radius: 7px;
+        color: rgb(191, 191, 191);
+        background-color: rgb(79, 79, 79);
+        cursor: pointer;
+        transition: background-color 0.1s;
+      }
+
+      .buttons button:hover {
+        background-color: rgb(87, 87, 87);
+      }
+
+      .buttons button:active {
+        box-shadow: inset 0 0 10px (rgba(0, 0, 0, 1));
+      }
+    </style>
+    <script
+      type="text/javascript"
+      src="https://tiiny.host/ad-script.js"></script>
+    <script
+      defer
+      data-domain="olive-lara-46.tiiny.site"
+      src="https://analytics.tiiny.site/js/plausible.js"></script>
+  </head>
+  <body>
+    <main class="wrapper">
+      <div class="title">Rock Paper Scissors</div>
+      <div class="js-computer-move">?</div>
+      <div class="border"></div>
+      <div class="scoreboard">
+        <div class="score">
+          <p class="js-wins-count">0</p>
+          <p>-</p>
+          <p class="js-loses-count">0</p>
+          <p>-</p>
+          <p class="js-ties-count">0</p>
+        </div>
+        <button
+          class="count-reset-button"
+          onclick="
+        score.wins = 0;
+        score.loses = 0;
+        score.ties = 0;
+        localStorage.removeItem('rock-paper-scissors-score')
+        updateScoreElement()
+        computerMoveElement = document.querySelector('.js-computer-move');
+        computerMoveElement.innerText = '?';
+        resultElement = document.querySelector('.js-result');
+        resultElement.innerText = 'Results: Undecided';
+        "></button>
+      </div>
+      <p class="js-result">Results: Undecided</p>
+      <div class="buttons">
+        <button
+          class="rock-button"
+          onclick="
+          playGame('rock');
+        ">
+          rock
+        </button>
+        <button
+          class="paper-button"
+          onclick="
+          playGame('paper');
+        ">
+          paper
+        </button>
+        <button
+          class="scissor-button"
+          onclick="
+          playGame('scissors');
+        ">
+          scissors
+        </button>
+      </div>
+    </main>
+    <script>
+      let score = JSON.parse(
+        localStorage.getItem("rock-paper-scissors-score")
+      ) || {
+        wins: 0,
+        loses: 0,
+        ties: 0,
+      };
+
+      function updateScoreElement() {
+        winsCountElement = document.querySelector(".js-wins-count");
+        losesCountElement = document.querySelector(".js-loses-count");
+        tiesCountElement = document.querySelector(".js-ties-count");
+
+        winsCountElement.innerText = `${score.wins}`;
+        losesCountElement.innerText = `${score.loses}`;
+        tiesCountElement.innerText = `${score.ties}`;
+      }
+      updateScoreElement();
+
+      function playGame(playerMove) {
+        let randomNumber = Math.random();
+        let computerMove = calcComputerMove();
+        let result = "";
+        function calcComputerMove() {
+          let computerMove = "";
+          if (randomNumber >= 0 && randomNumber < 1 / 3) {
+            computerMove = "rock";
+          } else if (randomNumber >= 1 / 3 && randomNumber < 2 / 3) {
+            computerMove = "paper";
+          } else if (randomNumber >= 2 / 3 && randomNumber < 3 / 3) {
+            computerMove = "scissors";
+          }
+          return computerMove;
+        }
+
+        function updateComputerMoveElement(computerMove) {
+          computerMoveElement = document.querySelector(".js-computer-move");
+          computerMoveElement.innerText = computerMove;
+        }
+
+        function updateResultElement(result) {
+          resultElement = document.querySelector(".js-result");
+          resultElement.innerText = result;
+        }
+
+        if (playerMove === "scissors") {
+          if (computerMove === "scissors") {
+            result = "You Tie!";
+          } else if (computerMove === "rock") {
+            result = "You Lose!";
+          } else if (computerMove === "paper") {
+            result = "You Win!";
+          }
+        } else if (playerMove === "paper") {
+          if (computerMove === "paper") {
+            result = "You Tie!";
+          } else if (computerMove === "scissors") {
+            result = "You Lose!";
+          } else if (computerMove === "rock") {
+            result = "You Win!";
+          }
+        } else if (playerMove === "rock") {
+          if (computerMove === "rock") {
+            result = "You Tie!";
+          } else if (computerMove === "paper") {
+            result = "You Lose!";
+          } else if (computerMove === "scissors") {
+            result = "You Win!";
+          }
+        }
+        if (result === "You Win!") {
+          score.wins++;
+        } else if (result === "You Lose!") {
+          score.loses++;
+        } else if (result === "You Tie!") {
+          score.ties++;
+        }
+
+        updateComputerMoveElement(computerMove);
+        updateScoreElement();
+        updateResultElement(result);
+
+        localStorage.setItem(
+          "rock-paper-scissors-score",
+          JSON.stringify(score)
+        );
+      }
+    </script>
+  </body>
+</html>
